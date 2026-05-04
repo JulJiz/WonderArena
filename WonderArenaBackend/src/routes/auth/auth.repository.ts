@@ -9,5 +9,16 @@ const createUser = async ({ email, password }: { email: string, password: string
     }
 }
 
+const loginUser = async ({ email, password }: { email: string, password: string }) => {
+    const { data, error } = await SupabaseClient.auth.signInWithPassword({ email, password })
+    if (error || !data.session?.access_token) {
+        throw new Error(error?.message ?? "Invalid credentials :((")
+    }
 
-export default { createUser }
+    return {
+        accessToken: data.session.access_token
+    }
+}
+
+
+export default { createUser, loginUser }
