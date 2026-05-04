@@ -1,16 +1,24 @@
 import { createContext, useContext, useState } from "react"
+import { getTokens, saveTokens } from "../utils/storage"
 
 interface AuthContextType {
     accessToken: string | null
     login: (tokens: { accessToken: string }) => void
 }
 
-const AuthContext = createContext<AuthContextType>(null)
+const AuthContext = createContext<AuthContextType>({
+    accessToken: null,
+    login: () => {}
+})
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [accessToken] = useState<string | null>(null)
+    const [accessToken, setAccessToken] = useState<string | null>(() => {
+        return getTokens().accessToken ?? null
+    })
 
-    const login = (_tokens: { accessToken: string }) => {
+    const login = (tokens: { accessToken: string }) => {
+        saveTokens(tokens)
+        setAccessToken(tokens.accessToken)
     }
 
     return (
